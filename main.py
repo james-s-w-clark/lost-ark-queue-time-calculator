@@ -2,6 +2,9 @@ import PySimpleGUI as sg
 import time
 from datetime import datetime, timedelta
 
+QUEUE_TIME_LABEL = 'Queue time remaining:'
+ETA_LABEL = 'Queue finished ETA:'
+
 
 def calculate_queue_seconds(t1, t2):
     update_time_seconds = 15
@@ -17,8 +20,8 @@ layout = [  [sg.Text('We will calculate your remaining queue time!')],
             [sg.Text('What is the queue count now? (e.g. 5762)'), sg.InputText()],
             [sg.Text('What is the next queue count? (e.g. 5734'), sg.InputText()],
             [sg.Button('Calculate'), sg.Button('Exit')],
-            [sg.Text('Remaining queue time:')],
-            [sg.Text('Queue finished ETA:')]]
+            [sg.Text('Remaining queue time:', key=QUEUE_TIME_LABEL)],
+            [sg.Text('Queue finished ETA:', key=ETA_LABEL)]]
 
 # Create the Window
 window = sg.Window('Lost Ark Queue Time Calculator', layout)
@@ -33,12 +36,12 @@ while True:
         queue_seconds = calculate_queue_seconds(t1, t2)
 
         formatted_time_remaining = time.strftime('%H:%M:%S', time.gmtime(queue_seconds))
-        print(formatted_time_remaining)
+        window[QUEUE_TIME_LABEL].update(QUEUE_TIME_LABEL + ' ' + formatted_time_remaining)
 
         now = datetime.now()
         finish_time = now + timedelta(0, queue_seconds)
         formatted_finish_time = finish_time.strftime('%H:%M:%S')
-        print(formatted_finish_time)
+        window[ETA_LABEL].update(ETA_LABEL + ' ' + formatted_finish_time)
 
 window.close()
 
